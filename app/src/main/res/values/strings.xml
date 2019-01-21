@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Weather App</string>
     <string name="go">GO!</string>
+    <string name="hint_enter_city">Enter the city</string>
+    <string name="celsius">°C</string>
+    <string name="fahrenheit">°F</string>
+    <string name="error_connection">Please check your connection settings and try again</string>
+    <string name="error_undefined">Unknown error occurred</string>
 </resources>

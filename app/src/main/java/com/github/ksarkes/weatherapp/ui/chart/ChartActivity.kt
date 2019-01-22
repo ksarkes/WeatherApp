@@ -1,15 +1,12 @@
 package com.github.ksarkes.weatherapp.ui.chart
 
-import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import com.github.ksarkes.weatherapp.R
-import com.github.ksarkes.weatherapp.data.entity.HistoryWeather
 import com.github.ksarkes.weatherapp.ui.common.BaseActivity
 import com.github.ksarkes.weatherapp.databinding.ActivityChartBinding
-import com.github.ksarkes.weatherapp.util.extension.humanize
+import com.github.ksarkes.weatherapp.util.extension.color
 import com.github.mikephil.charting.data.*
-import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class ChartActivity : BaseActivity<ActivityChartBinding>() {
@@ -25,51 +22,38 @@ class ChartActivity : BaseActivity<ActivityChartBinding>() {
         super.onCreate(savedInstanceState)
 
         initToolbar()
+        setupViews()
 
-        vm.history.observeNotNull { setData(it) }
+        vm.chartData.observeNotNull(::setData)
         vm.loadHistoryData(cityId)
     }
 
-    private fun setData(weather: List<HistoryWeather>) {
-        val delta = weather.map { it.date }.minBy { it }!!
-        val entries = weather.map {
-            Entry((it.date - delta).toFloat(), it.tempCelsius.toFloat())
+    private fun setupViews() {
+        setOf(binding.lineChart, binding.candleStickChart).forEach {
+            with(it) {
+                legend.isEnabled = false
+                description.isEnabled = false
+                xAxis.isGranularityEnabled = true
+                xAxis.granularity = 30f
+            }
         }
+    }
 
+    private fun setData(chartData: ChartDataWrapper) {
         with(binding.lineChart) {
-            data = LineData(LineDataSet(entries, "temp"))
-            legend.isEnabled = false
-            description.isEnabled = false
-            xAxis.isGranularityEnabled = true
-            xAxis.granularity = 60 * 30f
-            xAxis.valueFormatter = IAxisValueFormatter { value, axis -> (value.toLong() + delta).humanize() }
-        }
-
-        val candleEntries = weather.map {
-            CandleEntry(
-                (it.date - delta).toFloat(),
-                it.tempMaxCelsius.toFloat(),
-                it.tempMinCelsius.toFloat(),
-                it.tempMinCelsius.toFloat(),
-                it.tempMaxCelsius.toFloat()
-            )
+            data = LineData(LineDataSet(chartData.lineEntries, null))
+            xAxis.valueFormatter = chartData.formatter
         }
 
         with(binding.candleStickChart) {
-            data = CandleData(CandleDataSet(candleEntries, "candle").apply {
-                decreasingColor = Color.RED
-                decreasingPaintStyle = Paint.Style.FILL
-                increasingColor = Color.rgb(122, 242, 84)
+            data = CandleData(CandleDataSet(chartData.candleEntries, null).apply {
                 increasingPaintStyle = Paint.Style.FILL
+                decreasingPaintStyle = Paint.Style.FILL
+                increasingColor = color(R.color.primary)
+                decreasingColor = color(R.color.primary)
             })
-
-            legend.isEnabled = false
-            description.isEnabled = false
-            xAxis.isGranularityEnabled = true
-            xAxis.granularity = 60 * 30f
-            xAxis.valueFormatter = IAxisValueFormatter { value, axis -> (value.toLong() + delta).humanize() }
+            xAxis.valueFormatter = chartData.formatter
         }
-
     }
 
     private fun initToolbar() {

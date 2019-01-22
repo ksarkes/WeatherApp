@@ -1,7 +1,7 @@
 package com.github.ksarkes.weatherapp.util.helper
 
 import android.content.Context
-import android.support.v4.content.ContextCompat
+import com.github.ksarkes.weatherapp.util.extension.color
 
 class ResourcesHelper(private val context: Context) {
 
@@ -11,5 +11,5 @@ class ResourcesHelper(private val context: Context) {
 
     fun getString(id: Int, vararg formats: Any): String = res.getString(id, *formats)
 
-    fun getColor(id: Int) = ContextCompat.getColor(context, id)
+    fun getColor(id: Int) = context.color(id)
 }

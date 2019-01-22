@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.view.View
+import androidx.annotation.ColorRes
 import kotlin.reflect.KClass
 
 fun Context.snack(view: View, message: String, duration: Int = Snackbar.LENGTH_SHORT) {
@@ -27,3 +28,5 @@ fun Context.start(clazz: KClass<*>, block: (Intent.() -> Unit)? = null) {
 fun Activity.requestPermissions(reqCode: Int, vararg permission: String) {
     ActivityCompat.requestPermissions(this, permission, reqCode)
 }
+
+fun Context.color(@ColorRes id: Int) = ContextCompat.getColor(this, id)

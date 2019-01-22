@@ -22,6 +22,8 @@ buildscript {
 
         AAC_version = '1.1.1'
 
+        play_version = '16.0.0'
+
         koin_version = '1.0.2'
 
         retrofit_version = '2.3.0'
@@ -32,15 +34,20 @@ buildscript {
         rxkotlin_version = '2.2.0'
         rxandroid_version = '2.1.0'
 
+        rxloc_version = '1.0.5'
+
         realm_ext_version = '2.4.0'
 
         threeten_version = '1.1.0'
+
+        chart_version = 'v3.1.0-alpha'
     }
 }
 
 allprojects {
     repositories {
         google()
+        maven { url 'https://jitpack.io' }
         jcenter()
     }
 }

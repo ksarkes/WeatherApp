@@ -26,6 +26,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     dataBinding {
         enabled = true
@@ -43,6 +48,9 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$AAC_version"
     kapt "android.arch.lifecycle:compiler:$AAC_version"
 
+    // Play services
+    implementation "com.google.android.gms:play-services-location:$play_version"
+
     // Koin
     implementation "org.koin:koin-android:$koin_version"
     implementation "org.koin:koin-android-viewmodel:$koin_version"
@@ -59,11 +67,16 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
 
+    implementation "com.patloew.rxlocation:rxlocation:$rxloc_version"
+
     // Realm
     implementation  "com.github.vicpinm:krealmextensions:$realm_ext_version"
 
     // Date
     implementation "com.jakewharton.threetenabp:threetenabp:$threeten_version"
+
+    // Chart
+    implementation "com.github.PhilJay:MPAndroidChart:$chart_version"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

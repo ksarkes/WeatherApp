@@ -6,4 +6,5 @@
     <string name="fahrenheit">°F</string>
     <string name="error_connection">Please check your connection settings and try again</string>
     <string name="error_undefined">Unknown error occurred</string>
+    <string name="error_location">Failed to determine location</string>
 </resources>

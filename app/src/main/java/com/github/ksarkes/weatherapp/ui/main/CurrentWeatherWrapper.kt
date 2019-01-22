@@ -3,7 +3,7 @@ package com.github.ksarkes.weatherapp.ui.main
 import com.github.ksarkes.weatherapp.data.entity.Weather
 import kotlin.math.roundToInt
 
-data class ForecastWrapper(
+data class CurrentWeatherWrapper(
     val city: String,
     val tempCelsius: String,
     val tempFahrenheit: String
@@ -11,8 +11,8 @@ data class ForecastWrapper(
 
     companion object {
 
-        fun from(data: Weather) = ForecastWrapper(
-            data.name,
+        fun from(data: Weather) = CurrentWeatherWrapper(
+            data.cityName,
             "${data.main.temp.roundToInt()} °",
             "${(data.main.temp * 9 / 5 + 32).roundToInt()} °"
         )

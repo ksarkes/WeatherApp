@@ -21,7 +21,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private val vm: MainViewModel by viewModel()
 
-    private val adapter = WeatherHistoryAdapter()
+    private val adapter by lazy { WeatherHistoryAdapter(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +39,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 is StateError -> {
                     showContent(true)
                     snack(binding.root, it.message)
-                 }
+                }
             }
         }
 

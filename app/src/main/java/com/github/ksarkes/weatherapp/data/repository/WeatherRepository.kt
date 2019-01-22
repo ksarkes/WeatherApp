@@ -4,6 +4,7 @@ import com.github.ksarkes.weatherapp.data.entity.HistoryWeather
 import com.github.ksarkes.weatherapp.data.entity.Weather
 import com.github.ksarkes.weatherapp.data.net.Api
 import com.github.ksarkes.weatherapp.util.extension.asRetrofitBody
+import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryAllAsFlowable
 import com.vicpin.krealmextensions.save
 
@@ -23,6 +24,8 @@ class WeatherRepository(private val api: Api) {
             weather.main.tempMin, weather.main.tempMax, weather.date, requestTime
         ).save()
     }
+
+    fun getWeatherHistory(cityId: Int) = HistoryWeather().query { equalTo("cityId", cityId) }
 
     fun getWeatherHistory() = HistoryWeather().queryAllAsFlowable()
 }

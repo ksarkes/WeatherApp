@@ -1,10 +1,7 @@
 package com.github.ksarkes.weatherapp.ui.main.history
 
 import com.github.ksarkes.weatherapp.data.entity.HistoryWeather
-import com.github.ksarkes.weatherapp.util.DateFormat
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
+import com.github.ksarkes.weatherapp.util.extension.humanize
 import kotlin.math.roundToInt
 
 data class WeatherHistoryItemWrapper(
@@ -21,12 +18,8 @@ data class WeatherHistoryItemWrapper(
             cityId = data.cityId,
             cityName = data.cityName,
             temp = data.tempCelsius.roundToInt().toString(),
-            date = getDate(data.date),
+            date = data.date.humanize(),
             hasChart = hasChart
         )
-
-        private fun getDate(unixTime: Long) = LocalDateTime
-            .ofInstant(Instant.ofEpochSecond(unixTime), ZoneId.systemDefault())
-            .format(DateFormat.DEFAULT_DATE_TIME)
     }
 }

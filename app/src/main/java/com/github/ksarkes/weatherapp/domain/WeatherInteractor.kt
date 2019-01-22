@@ -13,5 +13,7 @@ class WeatherInteractor(private val weatherRepository: WeatherRepository) {
         .getWeather(loc.latitude, loc.longitude)
         .doOnSuccess { weatherRepository.saveWeather(it, System.currentTimeMillis()) }
 
+    fun getWeatherHistory(cityId: Int) = weatherRepository.getWeatherHistory(cityId)
+
     fun observeWeatherHistory() = weatherRepository.getWeatherHistory()
 }

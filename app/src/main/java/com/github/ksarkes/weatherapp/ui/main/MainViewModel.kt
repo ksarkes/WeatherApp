@@ -9,6 +9,7 @@ import com.github.ksarkes.weatherapp.ui.common.StateLoading
 import com.github.ksarkes.weatherapp.ui.common.StateSuccess
 import com.github.ksarkes.weatherapp.ui.main.history.WeatherHistoryItemWrapper
 import com.github.ksarkes.weatherapp.util.extension.liveDataOf
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 
 class MainViewModel(
@@ -20,9 +21,16 @@ class MainViewModel(
 
     val history = liveDataOf<List<WeatherHistoryItemWrapper>>()
 
+    private val weatherLoadingSubs = CompositeDisposable()
+
     init {
-        weatherInteractor.getWeatherHistory()
-            .map { history -> history.map { WeatherHistoryItemWrapper.from(it, true) } }
+        weatherInteractor.observeWeatherHistory()
+            .map { all ->
+                all.groupBy { it.cityId }.values
+                    .map { cityGroup -> cityGroup.maxBy { it.date }!! to cityGroup.size }
+                    .sortedByDescending { it.first.requestTime }
+            }
+            .map { cities -> cities.map { WeatherHistoryItemWrapper.from(it.first, it.second > 1) } }
             .subscribe({
                 history.postValue(it)
             }, {
@@ -32,29 +40,25 @@ class MainViewModel(
     }
 
     fun loadWeather(city: String?) {
-        state.postValue(StateLoading())
-
-        weatherInteractor.getCurrentWeather(city ?: "")
-            .map { CurrentWeatherWrapper.from(it) }
-            .subscribe({
-                weather.postValue(it)
-                state.postValue(StateSuccess())
-            }, {
-                state.postValue(StateError(it))
-            })
-            .addTo(subs)
+        loadWeather(WeatherRequestType.CityName(city ?: ""))
     }
 
     fun loadHomeWeather() {
         locationInteractor.getLocation()
             .subscribe(::loadWeather) { state.postValue(StateError(it)) }
-            .addTo(subs)
+            .addTo(weatherLoadingSubs)
     }
 
     private fun loadWeather(loc: Location) {
+        loadWeather(WeatherRequestType.Coordinates(loc))
+    }
+
+    private fun loadWeather(type: WeatherRequestType) {
+        weatherLoadingSubs.clear()
+
         state.postValue(StateLoading())
 
-        weatherInteractor.getCurrentWeather(loc)
+        provideWeather(type)
             .map { CurrentWeatherWrapper.from(it) }
             .subscribe({
                 weather.postValue(it)
@@ -63,5 +67,20 @@ class MainViewModel(
                 state.postValue(StateError(it))
             })
             .addTo(subs)
+    }
+
+    private fun provideWeather(type: WeatherRequestType) = when (type) {
+        is WeatherRequestType.CityName -> weatherInteractor.getCurrentWeather(type.city)
+        is WeatherRequestType.Coordinates -> weatherInteractor.getCurrentWeather(type.loc)
+    }
+
+    override fun onCleared() {
+        weatherLoadingSubs.dispose()
+        super.onCleared()
+    }
+
+    private sealed class WeatherRequestType {
+        class CityName(val city: String) : WeatherRequestType()
+        class Coordinates(val loc: Location) : WeatherRequestType()
     }
 }

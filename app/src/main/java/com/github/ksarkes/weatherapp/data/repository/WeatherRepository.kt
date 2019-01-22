@@ -17,10 +17,10 @@ class WeatherRepository(private val api: Api) {
         .getForecast(lat, lon)
         .asRetrofitBody()
 
-    fun saveWeather(weather: Weather) {
+    fun saveWeather(weather: Weather, requestTime: Long) {
         HistoryWeather(
             weather.cityId, weather.cityName, weather.main.temp,
-            weather.main.tempMin, weather.main.tempMax, weather.date
+            weather.main.tempMin, weather.main.tempMax, weather.date, requestTime
         ).save()
     }
 

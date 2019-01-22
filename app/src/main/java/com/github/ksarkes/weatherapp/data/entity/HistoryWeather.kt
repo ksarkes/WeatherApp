@@ -10,5 +10,6 @@ open class HistoryWeather(
     open var tempMinCelsius: Double = .0,
     open var tempMaxCelsius: Double = .0,
     open var date: Long = 0L,
+    open var requestTime: Long = 0L,
     @PrimaryKey open var uid: String = "${cityId}_$date"
 ) : RealmObject()

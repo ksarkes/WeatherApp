@@ -7,4 +7,6 @@
     <string name="error_connection">Please check your connection settings and try again</string>
     <string name="error_undefined">Unknown error occurred</string>
     <string name="error_location">Failed to determine location</string>
+    <string name="city_title_celsius">%1$s, %2$d °C</string>
+    <string name="city_title_fahrenheit">%1$s, %2$d °F</string>
 </resources>

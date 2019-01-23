@@ -38,28 +38,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 }
                 is StateError -> {
                     showContent(true)
-                    snack(binding.root, it.message)
+                    binding.root.snack(it.message)
                 }
             }
         }
 
-        vm.history.observeNotNull { adapter.updateData(it) }
-    }
-
-    private fun showContent(show: Boolean) {
-        with(binding) {
-            content.visible(show)
-            progress.invisible(show)
-        }
+        vm.history.observeNotNull(adapter::updateData)
+        vm.isCelsius.observeNotNull(adapter::updateUnits)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (requestCode == LOC_PERMISSION_REQ_CODE
-            && grantResults.isNotEmpty()
-            && grantResults[0] == PERMISSION_GRANTED
-        ) {
+        if (requestCode == LOC_PERMISSION_REQ_CODE && grantResults.firstOrNull() == PERMISSION_GRANTED) {
             vm.loadHomeWeather()
         }
     }
@@ -76,6 +67,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             } else {
                 requestPermissions(LOC_PERMISSION_REQ_CODE, ACCESS_FINE_LOCATION)
             }
+        }
+    }
+
+    private fun showContent(show: Boolean) {
+        with(binding) {
+            content.visible(show)
+            progress.invisible(show)
         }
     }
 

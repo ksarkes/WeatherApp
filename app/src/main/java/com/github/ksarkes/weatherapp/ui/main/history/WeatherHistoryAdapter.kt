@@ -16,11 +16,24 @@ class WeatherHistoryAdapter(private val context: Context) : RecyclerView.Adapter
 
     var data = listOf<WeatherHistoryItemWrapper>()
 
+    private var isCelsius = true
+
+    init {
+        setHasStableIds(true)
+    }
+
     fun updateData(data: List<WeatherHistoryItemWrapper>) {
         val diff = DiffUtil.calculateDiff(WeatherHistoryDiffUtilCallback(this.data, data))
         this.data = data
         diff.dispatchUpdatesTo(this)
     }
+
+    fun updateUnits(isCelsius: Boolean) {
+        this.isCelsius = isCelsius
+        notifyDataSetChanged()
+    }
+
+    override fun getItemId(position: Int) = data[position].cityId.toLong()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = parent.inflate<ItemWeatherHistoryBinding>(R.layout.item_weather_history)
@@ -42,13 +55,14 @@ class WeatherHistoryAdapter(private val context: Context) : RecyclerView.Adapter
     override fun getItemCount() = data.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(data[position])
+        holder.bind(data[position], isCelsius)
     }
 
     class ViewHolder(private val binding: ItemWeatherHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: WeatherHistoryItemWrapper) {
+        fun bind(item: WeatherHistoryItemWrapper, isCelsius: Boolean) {
             binding.item = item
+            binding.isCelsius = isCelsius
         }
     }
 }

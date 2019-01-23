@@ -3,6 +3,7 @@ package com.github.ksarkes.weatherapp.util.extension
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.support.annotation.LayoutRes
+import android.support.design.widget.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,4 +22,8 @@ fun View.visible(visible: Boolean = true) {
 
 fun View.invisible(invisible: Boolean = true) {
     this.visibility = if (invisible) View.INVISIBLE else View.VISIBLE
+}
+
+fun View.snack(message: String, duration: Int = Snackbar.LENGTH_SHORT) {
+    Snackbar.make(this, message, duration).show()
 }

@@ -2,6 +2,7 @@ package com.github.ksarkes.weatherapp.ui.main
 
 import android.location.Location
 import com.github.ksarkes.weatherapp.domain.LocationInteractor
+import com.github.ksarkes.weatherapp.domain.SettingsInteractor
 import com.github.ksarkes.weatherapp.domain.WeatherInteractor
 import com.github.ksarkes.weatherapp.ui.common.BaseViewModel
 import com.github.ksarkes.weatherapp.ui.common.StateError
@@ -14,12 +15,15 @@ import io.reactivex.rxkotlin.addTo
 
 class MainViewModel(
     private val weatherInteractor: WeatherInteractor,
-    private val locationInteractor: LocationInteractor
+    private val locationInteractor: LocationInteractor,
+    private val settingsInteractor: SettingsInteractor
 ) : BaseViewModel() {
 
     val weather = liveDataOf<CurrentWeatherWrapper>()
 
     val history = liveDataOf<List<WeatherHistoryItemWrapper>>()
+
+    val isCelsius = liveDataOf(settingsInteractor.isCelsius)
 
     private val weatherLoadingSubs = CompositeDisposable()
 
@@ -44,9 +48,15 @@ class MainViewModel(
     }
 
     fun loadHomeWeather() {
+        state.postValue(StateLoading())
+
         locationInteractor.getLocation()
             .subscribe(::loadWeather) { state.postValue(StateError(it)) }
             .addTo(weatherLoadingSubs)
+    }
+
+    fun checkCelsius(checked: Boolean) {
+        settingsInteractor.isCelsius = checked
     }
 
     private fun loadWeather(loc: Location) {

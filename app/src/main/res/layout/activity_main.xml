@@ -12,10 +12,6 @@
         <variable
             name="city"
             type="String" />
-
-        <variable
-            name="fahrenheit"
-            type="Boolean" />
     </data>
 
     <LinearLayout
@@ -120,7 +116,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="48dp"
-                    android:text="@{fahrenheit ? vm.weather.tempFahrenheit : vm.weather.tempCelsius}"
+                    android:text="@{vm.isCelsius ? vm.weather.tempCelsius : vm.weather.tempFahrenheit}"
                     android:textColor="@color/textPrimary"
                     android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -132,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
                     android:text="@string/celsius"
-                    android:textColor="@{!fahrenheit ? @color/textPrimary : @color/textSecondary}"
+                    android:textColor="@{vm.isCelsius ? @color/textPrimary : @color/textSecondary}"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toStartOf="@+id/unitsSwitch"
                     app:layout_constraintTop_toTopOf="@+id/fahrenheit" />
@@ -142,8 +138,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
+                    android:onCheckedChanged="@{(view, checked) -> vm.checkCelsius(!checked)}"
                     android:layout_marginEnd="4dp"
-                    android:checked="@={fahrenheit}"
+                    android:checked="@={!vm.isCelsius}"
                     app:layout_constraintEnd_toStartOf="@+id/fahrenheit"
                     app:layout_constraintTop_toTopOf="@+id/fahrenheit"
                     app:thumbTint="@color/primaryDark"
@@ -154,7 +151,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/fahrenheit"
-                    android:textColor="@{fahrenheit ? @color/textPrimary : @color/textSecondary}"
+                    android:textColor="@{!vm.isCelsius ? @color/textPrimary : @color/textSecondary}"
                     android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />

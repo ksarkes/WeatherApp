@@ -9,4 +9,6 @@ class SettingsInteractor(private val settingsRepository: SettingsRepository) {
         set(value) {
             settingsRepository.saveIsCelsius(value)
         }
+
+    val currentUnitsName get() = settingsRepository.getUnitsName()
 }

@@ -8,5 +8,5 @@ import org.koin.dsl.module.module
 val dataModule = module {
     single { WeatherRepository(get()) }
     single { LocationRepository(get()) }
-    single { SettingsRepository(get()) }
+    single { SettingsRepository(get(), get()) }
 }

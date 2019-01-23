@@ -2,6 +2,7 @@ package com.github.ksarkes.weatherapp.ui.main
 
 import com.github.ksarkes.weatherapp.R
 import com.github.ksarkes.weatherapp.data.entity.Weather
+import com.github.ksarkes.weatherapp.util.extension.toFahrenheit
 import com.github.ksarkes.weatherapp.util.helper.ResourcesHelper
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
@@ -21,7 +22,7 @@ data class CurrentWeatherWrapper(
         fun from(data: Weather) = CurrentWeatherWrapper(
             city = data.cityName,
             tempCelsius = "${data.main.temp.roundToInt()} °",
-            tempFahrenheit = "${(data.main.temp * 9 / 5 + 32).roundToInt()} °",
+            tempFahrenheit = "${data.main.temp.toFahrenheit().roundToInt()} °",
             background = res.getColor(
                 with(data.main.temp) {
                     when {

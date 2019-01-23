@@ -32,27 +32,36 @@ class ChartActivity : BaseActivity<ActivityChartBinding>() {
         setOf(binding.lineChart, binding.candleStickChart).forEach {
             with(it) {
                 legend.isEnabled = false
-                description.isEnabled = false
-                xAxis.isGranularityEnabled = true
-                xAxis.granularity = 30f
+                isHighlightPerTapEnabled = false
+                isHighlightPerDragEnabled = false
+                axisLeft.isEnabled = false
+                xAxis.labelCount = 2
             }
         }
     }
 
     private fun setData(chartData: ChartDataWrapper) {
+        setOf(binding.lineChart, binding.candleStickChart).forEach {
+            it.description.text = chartData.units
+        }
+
         with(binding.lineChart) {
             data = LineData(LineDataSet(chartData.lineEntries, null))
-            xAxis.valueFormatter = chartData.formatter
+            data.setValueFormatter(chartData.valueFormatter)
+            xAxis.valueFormatter = chartData.axisFormatter
         }
 
         with(binding.candleStickChart) {
-            data = CandleData(CandleDataSet(chartData.candleEntries, null).apply {
-                increasingPaintStyle = Paint.Style.FILL
-                decreasingPaintStyle = Paint.Style.FILL
-                increasingColor = color(R.color.primary)
-                decreasingColor = color(R.color.primary)
-            })
-            xAxis.valueFormatter = chartData.formatter
+            data = CandleData(
+                CandleDataSet(chartData.candleEntries, null).apply {
+                    increasingPaintStyle = Paint.Style.FILL
+                    decreasingPaintStyle = Paint.Style.FILL
+                    increasingColor = color(R.color.primary)
+                    decreasingColor = color(R.color.primary)
+                }
+            )
+            data.setValueFormatter(chartData.valueFormatter)
+            xAxis.valueFormatter = chartData.axisFormatter
         }
     }
 

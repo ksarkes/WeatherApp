@@ -8,9 +8,6 @@ import android.support.v7.widget.RecyclerView
 import com.github.ksarkes.weatherapp.R
 import com.github.ksarkes.weatherapp.databinding.ActivityMainBinding
 import com.github.ksarkes.weatherapp.ui.common.BaseActivity
-import com.github.ksarkes.weatherapp.ui.common.StateError
-import com.github.ksarkes.weatherapp.ui.common.StateLoading
-import com.github.ksarkes.weatherapp.ui.common.StateSuccess
 import com.github.ksarkes.weatherapp.ui.main.history.WeatherHistoryAdapter
 import com.github.ksarkes.weatherapp.util.extension.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -28,23 +25,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         setupViews()
 
-        vm.state.observeNotNull {
-            when (it) {
-                is StateSuccess -> {
-                    showContent(true)
-                }
-                is StateLoading -> {
-                    showContent(false)
-                }
-                is StateError -> {
-                    showContent(true)
-                    binding.root.snack(it.message)
-                }
-            }
-        }
-
         vm.history.observeNotNull(adapter::updateData)
         vm.isCelsius.observeNotNull(adapter::updateUnits)
+        vm.error.observeNotNull { binding.root.snack(it.message) }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -67,13 +50,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             } else {
                 requestPermissions(LOC_PERMISSION_REQ_CODE, ACCESS_FINE_LOCATION)
             }
-        }
-    }
-
-    private fun showContent(show: Boolean) {
-        with(binding) {
-            content.visible(show)
-            progress.invisible(show)
         }
     }
 

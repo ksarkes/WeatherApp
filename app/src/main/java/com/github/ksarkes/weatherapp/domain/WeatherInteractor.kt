@@ -15,5 +15,7 @@ class WeatherInteractor(private val weatherRepository: WeatherRepository) {
 
     fun getWeatherHistory(cityId: Int) = weatherRepository.getWeatherHistory(cityId)
 
-    fun observeWeatherHistory() = weatherRepository.getWeatherHistory()
+    fun getLastHistoryWeather() = weatherRepository.getLastHistoryWeather()
+
+    fun observeWeatherHistory() = weatherRepository.getWeatherHistoryUpdates()
 }

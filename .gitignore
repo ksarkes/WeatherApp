@@ -53,3 +53,4 @@ freeline/
 freeline_project_description.json
 libs/
 /app/release/
+/app/src/main/res/values/secrets.xml

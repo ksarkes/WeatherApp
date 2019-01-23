@@ -4,10 +4,7 @@ import android.location.Location
 import com.github.ksarkes.weatherapp.domain.LocationInteractor
 import com.github.ksarkes.weatherapp.domain.SettingsInteractor
 import com.github.ksarkes.weatherapp.domain.WeatherInteractor
-import com.github.ksarkes.weatherapp.ui.common.BaseViewModel
-import com.github.ksarkes.weatherapp.ui.common.StateError
-import com.github.ksarkes.weatherapp.ui.common.StateLoading
-import com.github.ksarkes.weatherapp.ui.common.StateSuccess
+import com.github.ksarkes.weatherapp.ui.common.*
 import com.github.ksarkes.weatherapp.ui.main.history.WeatherHistoryItemWrapper
 import com.github.ksarkes.weatherapp.util.extension.liveDataOf
 import io.reactivex.disposables.CompositeDisposable
@@ -28,6 +25,10 @@ class MainViewModel(
     private val weatherLoadingSubs = CompositeDisposable()
 
     init {
+        weatherInteractor.getLastHistoryWeather()
+            ?.let { CurrentWeatherWrapper.from(it) }
+            ?.let(weather::postValue)
+
         weatherInteractor.observeWeatherHistory()
             .map { all ->
                 all.groupBy { it.cityId }.values
@@ -35,11 +36,7 @@ class MainViewModel(
                     .sortedByDescending { it.first.requestTime }
             }
             .map { cities -> cities.map { WeatherHistoryItemWrapper.from(it.first, it.second > 1) } }
-            .subscribe({
-                history.postValue(it)
-            }, {
-                it.printStackTrace()
-            })
+            .subscribe(history::postValue, Throwable::printStackTrace)
             .addTo(subs)
     }
 
@@ -48,10 +45,10 @@ class MainViewModel(
     }
 
     fun loadHomeWeather() {
-        state.postValue(StateLoading())
+        loading.postValue(true)
 
         locationInteractor.getLocation()
-            .subscribe(::loadWeather) { state.postValue(StateError(it)) }
+            .subscribe(::loadWeather, ::handleError)
             .addTo(weatherLoadingSubs)
     }
 
@@ -65,16 +62,15 @@ class MainViewModel(
 
     private fun loadWeather(type: WeatherRequestType) {
         weatherLoadingSubs.clear()
-
-        state.postValue(StateLoading())
+        loading.postValue(true)
 
         provideWeather(type)
             .map { CurrentWeatherWrapper.from(it) }
             .subscribe({
                 weather.postValue(it)
-                state.postValue(StateSuccess())
+                loading.postValue(false)
             }, {
-                state.postValue(StateError(it))
+                handleError(it)
             })
             .addTo(subs)
     }
